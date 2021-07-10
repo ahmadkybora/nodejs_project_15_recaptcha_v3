@@ -115,6 +115,14 @@ async function login(req, res) {
  * @returns {Promise<void>}
  */
 async function handleLogin(req, res, next) {
+    if (!req.body["g-recaptcha-response"]) {
+        return res.status(401).json({
+            state: true,
+            message: "rECAPTCHA is required!",
+            data: null,
+            errors: null
+        });
+    }
     await passport.authenticate("local", {
         successRedirect: "panel/dashboard",
         failureRedirect: "login",
