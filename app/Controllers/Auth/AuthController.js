@@ -11,7 +11,7 @@ const generateAccessToken = require('../../../helpers/generateAccessToken');
 const SignUp = require('../../../app/Mail/SignUp');
 
 const AuthController = {
-    handleLogin,
+    //handleLogin,
     rememberMe,
     login,
     register,
@@ -37,7 +37,6 @@ async function pub(req, res) {
  * @returns {Promise<*|Json|Promise<any>>}
  */
 async function login(req, res) {
-    console.log(req.body);
     const user = await User.findOne({
         where: {
             username: req.body.username
@@ -114,8 +113,8 @@ async function login(req, res) {
  * @param next
  * @returns {Promise<void>}
  */
-async function handleLogin(req, res, next) {
-    if (!req.body["g-recaptcha-response"]) {
+/*async function handleLogin(req, res, next) {
+    if (!req.body["RECAPTCHA_SITE_KEY"]) {
         return res.status(401).json({
             state: true,
             message: "rECAPTCHA is required!",
@@ -123,12 +122,25 @@ async function handleLogin(req, res, next) {
             errors: null
         });
     }
+
+    const secretKey = process.env.RECAPTCHA_SECRET_KEY;
+    const verifyUrl = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${req.body["RECAPTCHA_SITE_KEY"]}
+    &remoteip=${req.connection.remoteAddress}`;
+
+    const response = await fetch(verifyUrl, {
+        method: "POST",
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+        },
+    });
+
     await passport.authenticate("local", {
         successRedirect: "panel/dashboard",
         failureRedirect: "login",
         failureFlash: true
     })(req, res, next);
-}
+}*/
 
 function rememberMe(req, res) {
     console.log(req.body.remember)

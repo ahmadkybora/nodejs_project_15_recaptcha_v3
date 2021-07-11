@@ -2,10 +2,11 @@ const express = require('express');
 const router = express.Router();
 const AuthController = require('../../app/Controllers/Auth/AuthController');
 const AuthRequest = require('../../app/Requests/AuthRequest');
+const rECAPTCHA = require('../../middlewares/rECAPTCHA');
 
 //router.post('/login', isLoggedOut, AuthController.handleLogin, AuthController.rememberMe);
 //router.post('/login', AuthController.rememberMe);
-router.post('/login', AuthRequest.login, AuthController.login);
+router.post('/login', AuthRequest.login, rECAPTCHA, AuthController.login);
 router.post('/register', AuthRequest.register, AuthController.register);
 router.get('/logout', AuthController.logout);
 router.post('/forget-password', AuthController.forgetPassword);
