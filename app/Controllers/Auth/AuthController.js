@@ -37,6 +37,7 @@ async function pub(req, res) {
  * @returns {Promise<*|Json|Promise<any>>}
  */
 async function login(req, res) {
+    console.log(req);
     const user = await User.findOne({
         where: {
             username: req.body.username
