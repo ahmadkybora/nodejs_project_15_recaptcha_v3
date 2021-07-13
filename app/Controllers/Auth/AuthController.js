@@ -7,8 +7,9 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Validator = require('fastest-validator');
 const v = new Validator();
-const generateAccessToken = require('../../../helpers/generateAccessToken');
 const SignUp = require('../../../app/Mail/SignUp');
+const ForgetPassword = require('../../../app/Mail/ForgetPassword');
+const generatToken = require('../../../helpers/generateToken');
 
 const AuthController = {
     //handleLogin,
@@ -17,7 +18,7 @@ const AuthController = {
     register,
     logout,
     forgetPassword,
-    resetPassword,
+    /* resetPassword,*/
     pub,
 };
 
@@ -45,7 +46,7 @@ async function login(req, res) {
     });
 
     const refreshToken = jwt.sign(user.username, process.env.REFRESH_TOKEN_SECRET);
-    const accessToken = generateAccessToken(user.username, user.id);
+    const accessToken = generatToken.generateAccessToken(user.username, user.id);
 
     Token.findOne({
         where: {
@@ -114,6 +115,7 @@ async function login(req, res) {
  * @param next
  * @returns {Promise<void>}
  */
+
 /*async function handleLogin(req, res, next) {
     if (!req.body["RECAPTCHA_SITE_KEY"]) {
         return res.status(401).json({
@@ -196,24 +198,31 @@ async function logout(req, res) {
 }
 
 async function forgetPassword(req, res) {
-
     const {email} = req.body;
-    const user = await User.findOne({email: email});
+    console.log(req.body);
+    console.log(email);
+    const user = await User.findOne({
+        email: email
+    });
     if (!user) {
-        return res.render("auth/forget-password", {
-            pageTitle: "",
-            path: "",
-        })
+        return res
+            .status(401)
+            .json({
+                state: false,
+                message: "YunAuthorized!",
+                data: null,
+                errors: null
+            });
     }
 
-    const token = jwt.sign({userId: user.id}, process.env.JWT_SECRET, {expiresIn: "1h"});
-    const resetLink = `http://localhost:3000/reset-password/${token}`;
-    //sendEmail(user.first_name, user.last_name, user.email, 'فراموشی رمز عبور', )
-}
-
-async function resetPassword(req, res) {
-    const p = req.body;
-    res.send(p);
+    const signature = generatToken.generateSignature(user.username, user.id);
+    const resetLink = `http://localhost:3000/reset-password/${signature}`;
+    await ForgetPassword.sendEmail(
+        email,
+        user.username,
+        'Forget Password',
+        `please click this link ${resetLink}`
+    );
 }
 
 module.exports = AuthController;

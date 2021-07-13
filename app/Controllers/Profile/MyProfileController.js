@@ -10,6 +10,8 @@ const jwt = require('jsonwebtoken');
 const MyProfileController = {
     index,
     update,
+    //forgetPassword,
+    resetPassword,
 };
 
 async function index(req, res) {
@@ -110,6 +112,11 @@ async function update(req, res) {
             });
         }
     });
+}
+
+async function resetPassword(req, res) {
+    const p = req.body;
+    res.send(p);
 }
 
 module.exports = MyProfileController;

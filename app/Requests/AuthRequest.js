@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 const AuthRequest = {
     register,
     login,
+    forgetPassword,
 };
 
 async function register(req, res, next) {
@@ -76,10 +77,8 @@ async function register(req, res, next) {
     const validate = v.validate(req.body, AuthRequest);
     let errorArr = [];
 
-    if (validate === true)
-    {
-        if (req.body.password !== req.body.confirmation_password)
-        {
+    if (validate === true) {
+        if (req.body.password !== req.body.confirmation_password) {
             errorArr.push({message: "کلمه های عبور یکسان نیستند"});
             return res.status(422).json({
                 status: false,
@@ -101,29 +100,24 @@ async function register(req, res, next) {
             }
         });
 
-        if(username)
+        if (username)
             errorArr.push({message: "نام کاربری موجود است"});
 
-        if(email)
+        if (email)
             errorArr.push({message: "ایمیل موجود است"});
 
-        if (username || email)
-        {
+        if (username || email) {
             return res.status(422).json({
                 status: false,
                 message: "failed!",
                 data: null,
                 errors: errorArr
             });
-        }
-        else
-        {
+        } else {
             next();
         }
 
-    }
-    else
-    {
+    } else {
         validate.forEach((err) => {
             errorArr.push(err.message);
         });
@@ -165,19 +159,16 @@ async function login(req, res, next) {
     const validate = v.validate(req.body, AuthRequest);
     let errorArr = [];
 
-    if (validate === true)
-    {
+    if (validate === true) {
         const user = await User.findOne({
             where: {
                 username: req.body.username
             }
         });
 
-        if (user)
-        {
+        if (user) {
             const validPassword = await bcrypt.compare(req.body.password, user.password);
-            if (!validPassword)
-            {
+            if (!validPassword) {
                 errorArr.push({message: "نام کاربری یا کلمه عبور اشتباه است"});
 
                 return res.status(401).json({
@@ -186,13 +177,10 @@ async function login(req, res, next) {
                     data: null,
                     errors: errorArr
                 });
-            }
-            else {
+            } else {
                 next();
             }
-        }
-        else
-        {
+        } else {
             errorArr.push({message: "نام کاربری یا کلمه عبور اشتباه است"});
 
             return res.status(401).json({
@@ -202,14 +190,42 @@ async function login(req, res, next) {
                 errors: errorArr
             });
         }
-    }
-    else
-    {
+    } else {
         errorArr.push({message: "نام کاربری یا کلمه عبور اشتباه است"});
 
         return res.status(401).json({
             state: false,
             message: "unAuthorized!",
+            data: null,
+            errors: errorArr
+        });
+    }
+}
+
+async function forgetPassword(req, res, next) {
+    const AuthRequest = {
+        email: {
+            type: "email",
+            trim: true,
+            messages: {
+                required: "ایمیل الزامی است",
+            }
+        },
+    };
+
+    const validate = v.validate(req.body, AuthRequest);
+    let errorArr = [];
+
+    if (validate === true) {
+        next();
+    } else {
+        validate.forEach((err) => {
+            errorArr.push(err.message);
+        });
+
+        return res.status(422).json({
+            state: false,
+            message: "failed!",
             data: null,
             errors: errorArr
         });

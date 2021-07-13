@@ -7,10 +7,9 @@ const rECAPTCHA = require('../../middlewares/rECAPTCHA');
 //router.post('/login', isLoggedOut, AuthController.handleLogin, AuthController.rememberMe);
 //router.post('/login', AuthController.rememberMe);
 router.post('/login', AuthRequest.login, rECAPTCHA, AuthController.login);
-router.post('/register', AuthRequest.register, AuthController.register);
+router.post('/register', AuthRequest.register, rECAPTCHA, AuthController.register);
 router.get('/logout', AuthController.logout);
-router.post('/forget-password', AuthController.forgetPassword);
-router.post('/reset-password', AuthController.resetPassword);
+router.post('/forget-password', AuthRequest.forgetPassword, rECAPTCHA, AuthController.forgetPassword);
 
 router.get('/products', AuthController.pub);
 router.get('/product-categories', AuthController.pub);
