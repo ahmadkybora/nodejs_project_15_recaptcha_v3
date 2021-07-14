@@ -1,0 +1,25 @@
+<h1 style="text-align: center">Welcome To Nodejs Project</h1>
+<img src="../../../../public/img/system.png"><br>
+<h1>Reset Your Password</h1>
+<p>Dear User <%= username %>, Please Verify
+    Your Reset Password Via Click The Bellow Link. If You Don't Reset Your Password In Our Website, Please Do Not
+    Attention This Mail.</p>
+
+{{&#45;&#45;@component('mail::button', ['url' => route('api.password.reset', ['user' => $user->username, 'timestamp' => $timestamp, 'signature' => $signature])])
+Reset Your Password Now
+
+
+'mail::button', ['style'=> 'text-align: center', 'url' => 'http://d-codesland.ir/password/reset?username=' . $user->username . '&timestamp=' . $timestamp . '&signature=' . $signature])
+Reset Your Password Now
+
+
+<p>If You Have Problem With Click The Button, You Can Copy And Paste The
+    Bellow Link In Address Bar Of Browser And Execute It!</p>
+{{&#45;&#45;<span>{{route('api.password.reset', ['user' => $user->username, 'timestamp' => $timestamp, 'signature' => $signature])}}</span>&#45;&#45;}}
+<span class="link">{{url('http://d-codesland.ir/password/reset?username=' . $user->username . '&timestamp=' . $timestamp . '&signature=' . $signature)}}</span>
+{{&#45;&#45;Signature: {{ $signature }}<br>
+Time: {{ $timestamp }}<br>
+{{ $user->username }}&#45;&#45;}}
+
+Thanks,<br>
+

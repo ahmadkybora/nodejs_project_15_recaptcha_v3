@@ -18,7 +18,7 @@ const AuthController = {
     register,
     logout,
     forgetPassword,
-    /* resetPassword,*/
+    resetPassword,
     pub,
 };
 
@@ -221,8 +221,40 @@ async function forgetPassword(req, res) {
         email,
         user.username,
         'Forget Password',
-        `please click this link ${resetLink}`
+        `${resetLink}`
     );
+    const forgetPassword = true;
+    return res
+        .status(200)
+        .json({
+            state: true,
+            message: "Send Email successfully!",
+            data: {
+                data: forgetPassword
+            },
+            errors: null
+        });
+}
+
+async function resetPassword(req, res) {
+    await User.update(req.body.password, {
+        where: {
+            username: req.body.username
+        }
+    });
+
+    const forgetPassword = false;
+    console.log(forgetPassword);
+    return res
+        .status(200)
+        .json({
+            state: true,
+            message: "reset password successfully!",
+            data: {
+                data: forgetPassword
+            },
+            errors: null
+        });
 }
 
 module.exports = AuthController;

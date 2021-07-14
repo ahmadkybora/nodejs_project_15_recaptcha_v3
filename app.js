@@ -109,6 +109,15 @@ io.on('connection', (socket) => {
 | Routing Part
 |--------------------------------------------------------------------------
 */
+app.use('/css', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/css')));
+app.use('/js', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/js')));
+app.use('/js', express.static(path.join(__dirname, 'node_modules/jquery/dist')));
+
+/*
+|--------------------------------------------------------------------------
+| Routing Part
+|--------------------------------------------------------------------------
+*/
 // Load routes
 app.use('/api/', require('./routes/front/homeRoutes'));
 app.use('/api/about', require('./routes/front/homeRoutes'));

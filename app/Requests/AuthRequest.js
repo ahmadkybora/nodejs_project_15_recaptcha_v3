@@ -2,11 +2,13 @@ const Validator = require('fastest-validator');
 const v = new Validator();
 const User = require('../../app/Models/UserModel');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const AuthRequest = {
     register,
     login,
     forgetPassword,
+    resetPassword,
 };
 
 async function register(req, res, next) {
@@ -217,6 +219,73 @@ async function forgetPassword(req, res, next) {
     let errorArr = [];
 
     if (validate === true) {
+        next();
+    } else {
+        validate.forEach((err) => {
+            errorArr.push(err.message);
+        });
+
+        return res.status(422).json({
+            state: false,
+            message: "failed!",
+            data: null,
+            errors: errorArr
+        });
+    }
+}
+
+async function resetPassword(req, res, next) {
+    const AuthRequest = {
+        current_password: {
+            type: "string",
+            trim: true,
+            min: 8,
+            max: 255,
+            messages: {
+                required: "پسورد الزامی است",
+            }
+        },
+        new_password: {
+            type: "string",
+            trim: true,
+            min: 8,
+            max: 255,
+            messages: {
+                required: "پسورد جدید الزامی است",
+            }
+        },
+        new_confirmation_password: {
+            type: "string",
+            trim: true,
+            min: 8,
+            max: 255,
+            messages: {
+                required: "تکرار پسورد جدید الزامی است",
+            }
+        },
+    };
+
+    const validate = v.validate(req.body, AuthRequest);
+    let errorArr = [];
+
+    if (validate === true) {
+        const userReq = jwt.decode(req.body.signature);
+        console.log(userReq);
+        const user = await User.findOne({
+            where: {
+                username: userReq.username
+            }
+        });
+        const passwordHash = await bcrypt.hash(req.body.new_password, 10);
+        const hash = bcrypt.compare(user.password, passwordHash);
+        if (!hash)
+            return res.status(401)
+                .json({
+                    state: false,
+                    message: "your password is not match!",
+                    data: null,
+                    errors: null
+                });
         next();
     } else {
         validate.forEach((err) => {
