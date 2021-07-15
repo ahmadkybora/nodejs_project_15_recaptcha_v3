@@ -3,13 +3,14 @@ const router = express.Router();
 const RoleController = require('../../app/Controllers/Panel/RoleController');
 const RoleRequest = require('../../app/Requests/RoleRequest');
 const isLoggedIn = require('../../middlewares/isLoggedIn');
+const isAdmin = require('../../middlewares/isAdmin');
 
-router.get('/', isLoggedIn, RoleController.index);
-router.post('/store', isLoggedIn, RoleRequest.create, RoleController.store);
-router.post('/update/:id', isLoggedIn, RoleRequest.update, RoleController.update);
-router.get('/destroy/:id', isLoggedIn, RoleController.destroy);
-router.get('/roles', isLoggedIn, RoleController.roles);
-router.get('/permissions', isLoggedIn, RoleController.permissions);
-router.post('/search', isLoggedIn, RoleController.search);
+router.get('/', isLoggedIn, isAdmin, RoleController.index);
+router.post('/store', isLoggedIn, isAdmin, RoleRequest.create, RoleController.store);
+router.post('/update/:id', isLoggedIn, isAdmin, RoleRequest.update, RoleController.update);
+router.get('/destroy/:id', isLoggedIn, isAdmin, RoleController.destroy);
+router.get('/roles', isLoggedIn, isAdmin, RoleController.roles);
+router.get('/permissions', isLoggedIn, isAdmin, RoleController.permissions);
+router.post('/search', isLoggedIn, isAdmin, RoleController.search);
 
 module.exports = router;

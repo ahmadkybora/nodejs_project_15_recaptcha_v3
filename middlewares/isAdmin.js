@@ -1,13 +1,12 @@
-const jwt = require('jsonwebtoken');
-const Employee = require('../app/Models/EmployeeModel');
+const User = require('../app/Models/UserModel');
 
 async function isAdmin(req, res, next) {
-    const isAdmin = await Employee.findOne({
+    const isAdmin = await User.findOne({
         where: {
-            id: req.userId,
+            username: req.body.username,
         }
     });
-    if (!isAdmin) {
+    if (isAdmin.isAdmin === false) {
         return res.status(401).json({
             state: true,
             message: "You are not admin!",

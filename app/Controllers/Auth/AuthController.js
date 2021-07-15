@@ -38,7 +38,6 @@ async function pub(req, res) {
  * @returns {Promise<*|Json|Promise<any>>}
  */
 async function login(req, res) {
-    console.log(req);
     const user = await User.findOne({
         where: {
             username: req.body.username
@@ -89,7 +88,6 @@ async function login(req, res) {
     });
 
     const roles = '';
-    const isAdmin = true;
 
     return res.status(200).json({
         state: true,
@@ -98,9 +96,10 @@ async function login(req, res) {
             first_name: user.first_name,
             last_name: user.last_name,
             username: user.username,
+            isAdmin: user.isAdmin,
             permissions,
             roles,
-            isAdmin,
+
             accessToken,
             refreshToken
         },

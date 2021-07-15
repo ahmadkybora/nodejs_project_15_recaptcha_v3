@@ -46,6 +46,11 @@ const User = dbCon.define('User', {
     work_address: {
         type: DataTypes.STRING,
     },
+    isAdmin: {
+        type: DataTypes.BOOLEAN,
+        required: true,
+        defaultValue: false,
+    },
     state: {
         type: DataTypes.ENUM('ACTIVE', 'INACTIVE', 'SUSPENDED', 'PENDING'),
         required: true,
@@ -72,7 +77,7 @@ const User = dbCon.define('User', {
     const password = '12345678';
     const hash = await bcrypt.hash(password, 10);
 
-    const admin = await User.create({
+    await User.create({
         first_name: 'admin',
         last_name: 'admin',
         username: 'admin',
@@ -84,6 +89,7 @@ const User = dbCon.define('User', {
         home_address: 'i have no home address',
         work_address: 'i have no work address',
         state: 'ACTIVE',
+        isAdmin: true,
         image: '',
         createdAt: Date.now(),
         updatedAt: Date.now(),
